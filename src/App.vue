@@ -1,27 +1,25 @@
 <script setup>
 import AppMenu from './Components/AppMenu.vue';
 import AppMessages from './Components/AppMessages.vue';
-import BooksList from './Components/BooksList.vue';
-import BookForm from './Components/BookForm.vue';
-import AppAbout from './Components/AppAbout.vue';
 </script>
 
 <template>
-  <div>
-    <img src="/logoBatoi.png" class="logo" alt="Batoi logo" />
-    <header>BatoiBooks</header>
+  <div id="app">
+    <header>
+        <img src="/logoBatoi.png" class="logo" alt="Batoi logo" />
+        <h1>BatoiBooks</h1>
+    </header>
+    
     <nav>
       <AppMenu></AppMenu>
     </nav>
-  </div>
+
     <AppMessages></AppMessages>
-    <BooksList></BooksList>
-  <div>
-    <BookForm></BookForm>
+    
+    <main>
+        <router-view></router-view>
+    </main>
   </div>
-  <br>
-  <AppAbout></AppAbout>
-  </br>
 </template>
 
 <style scoped></style>

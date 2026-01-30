@@ -1,13 +1,10 @@
-<script setup>
-import BooksList from './BooksList.vue';
-
-</script>
 <template>
     <ul>
-        <li><a href="#list">Ver libros</a></li>
-        <li><a href="#form">Añadir Libro</a></li>
-        <li><a href="#about">Acerca de...</a></li>
-      </ul>
+        <li><router-link to="/">Ver libros</router-link></li>
+        <li><router-link to="/create">Nuevo Libro</router-link></li>
+        <li><router-link to="/cart">Ver carrito</router-link></li>
+        <li><router-link to="/about">Acerca de...</router-link></li>
+    </ul>
 </template>
 
 <style scoped>
@@ -31,5 +28,10 @@ nav ul li a {
 
 nav ul li a:hover {
     text-decoration: underline;
+}
+
+.router-link-active {
+    text-decoration: underline;
+    color: var(--secondary-color);
 }
 </style>

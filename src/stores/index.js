@@ -55,9 +55,29 @@ export const store = reactive({
         try {
             await api.addBook(book);
             this.addMessage(`Libro añadido correctamente`, 'success');
-            await this.fetchBooks();
         } catch (error) {
             this.addMessage("Error al añadir el libro: " + error.message, 'danger');
+            throw error;
+        }
+    },
+
+    async updateBook(id, book) {
+        try {
+            await api.editBook(id, book);
+            this.addMessage(`Libro editado correctamente`, 'success');
+        } catch (error) {
+            this.addMessage("Error al editar el libro: " + error.message, 'danger');
+            throw error;
+        }
+    },
+
+    async fetchBook(id) {
+        try {
+            const response = await api.getBook(id);
+            return response.data;
+        } catch (error) {
+            this.addMessage("Error al cargar el libro: " + error.message, 'danger');
+            return null;
         }
     },
 

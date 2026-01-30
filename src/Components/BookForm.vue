@@ -1,6 +1,12 @@
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
 import { store } from '../stores/index';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+
+const isEditing = computed(() => !!route.params.id);
 
 const form = reactive({
   id: '',
@@ -13,12 +19,19 @@ const form = reactive({
   soldDate: ''
 });
 
-onMounted(() => {
-  store.fetchModules();
+onMounted(async() => {
+  await store.fetchModules();
+
+  if (isEditing.value) {
+    const bookData = await store.fetchBook(route.params.id)
+    if(bookData) {
+      Object.assign(form, bookData)
+    }
+  }
 })
 
 const handleSubmit = async () => {
-  const newBook = {
+  const bookData = {
     moduleCode: form.moduleCode,
     publisher: form.publisher,
     price: parseFloat(form.price),
@@ -28,24 +41,35 @@ const handleSubmit = async () => {
     soldDate: form.soldDate
   };
 
-  await store.addBook(newBook);
-  handleReset();
+  if (isEditing.value) {
+    await store.updateBook(form.id, bookData)
+  } else {
+    await store.addBook(bookData)
+  }
+
+  router.push('/')
 }
 
-const handleReset = () => {
-  form.moduleCode = '';
-  form.publisher = '';
-  form.price = null;
-  form.pages = null;
-  form.status = 'good';
-  form.comments = '';
-  form.soldDate = '';
+const handleReset = async () => {
+  if (isEditing.value) {
+    const bookData = await store.fetchBook(route.params.id)
+    if (bookData) Object.assign(form, bookData)
+  } else {
+    form.moduleCode = '';
+    form.publisher = '';
+    form.price = null;
+    form.pages = null;
+    form.status = 'good';
+    form.comments = '';
+    form.soldDate = '';
+  }
 };
 </script>
 
 <template>
     <form id="form" novalidate @submit.prevent="handleSubmit" @reset.prevent="handleReset">
-      <h3 id="form-title">Añadir libro</h3>
+      
+      <h3 id="form-title">{{ isEditing ? 'Editar libro' : 'Añadir libro' }}</h3>
 
       <div style="display: none;" id="book-id-div">
         <label for="book-id">ID:</label>
@@ -53,55 +77,56 @@ const handleReset = () => {
       </div>
 
       <div>
-        <label for="book-moduleCode">moduleCode: </label>
-        <select v-model="form.moduleCode" name="moduleCode" id="book-moduleCode" required>
-          <option value="" id="select" disabled>Escoge el módulo:</option>
-          <option 
-            v-for="mod in store.modules" 
-            :key="mod.code" 
-            :value="mod.code">
-            {{ mod.cliteral }} ({{ mod.code }})
+        <label for="book-moduleCode">Módulo: </label>
+        <select v-model="form.moduleCode" id="book-moduleCode" required>
+          <option value="" disabled>Elige el módulo:</option>
+          <option v-for="mod in store.state.modules" :key="mod.code" :value="mod.code">
+            {{ mod.code }} - {{ mod.cliteral }}
           </option>
         </select>
       </div>
 
       <div>
         <label for="book-publisher">Editorial: </label>
-        <input v-model="form.publisher" type="text" id="book-publisher" name="publisher" required>
+        <input v-model="form.publisher" type="text" id="book-publisher" required>
       </div>
 
       <div>
         <label for="book-price">Precio: </label>
-        <input v-model="form.price" type="number" name="price" id="book-price" required step="0.01" min="0">
+        <input v-model="form.price" type="number" id="book-price" required step="0.01" min="0">
       </div>
 
       <div>
         <label for="book-pages">Páginas: </label>
-        <input v-model="form.pages" type="number" name="pages" id="book-pages" required min="0">
+        <input v-model="form.pages" type="number" id="book-pages" required min="0">
       </div>
 
       <div>
         <p>Estado: </p>
-        <input v-model="form.status" type="radio" id="status-good" name="status" value="good" required>
+        <input v-model="form.status" type="radio" id="status-good" value="good" required>
         <label for="status-good">Bueno</label>
 
-        <input v-model="form.status" type="radio" id="status-bad" name="status" value="bad">
+        <input v-model="form.status" type="radio" id="status-bad" value="bad">
         <label for="status-bad">Malo</label>
       </div>
 
       <div>
         <label for="book-comments">Comentarios: </label>
-        <textarea v-model="form.comments" name="comments" id="book-comments"></textarea>
+        <textarea v-model="form.comments" id="book-comments"></textarea>
       </div>
 
       <div>
         <label for="book-soldDate">Fecha de venta: </label>
-        <input v-model="form.soldDate" type="date" name="soldDate" id="book-soldDate">
+        <input v-model="form.soldDate" type="date" id="book-soldDate">
       </div>
 
       <div>
-        <button type="submit" id="btn-submit">Guardar Libro</button>
-        <button type="reset" id="btn-reset">Reset</button>
+        <button type="submit" id="btn-submit">
+            {{ isEditing ? 'Modificar' : 'Añadir' }}
+        </button>
+        <button type="reset" id="btn-reset">
+            {{ isEditing ? 'Restaurar' : 'Limpiar' }}
+        </button>
       </div>
 
     </form>

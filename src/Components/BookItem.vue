@@ -1,10 +1,17 @@
 <script setup>
-    const props = defineProps(['book']);
-    const emit = defineEmits(['delete']);
+import { useRouter } from 'vue-router';
 
-    const onDelete = () => {
-        emit('delete', props.book.id, props.book.moduleCode);
-    };
+const props = defineProps(['book']);
+const emit = defineEmits(['delete']);
+const router = useRouter();
+
+const onDelete = () => {
+    emit('delete', props.book.id, props.book.moduleCode);
+};
+
+const onEdit = () => {
+    router.push({ name: 'edit', params: { id: props.book.id } })
+}
 </script>
 <template>
     <div class="card">
@@ -18,11 +25,21 @@
             
         <div class="actions">
             <button class="btn-delete" @click="onDelete">
-                <span class="material-icons">delete</span> Borrar
+                <span class="material-icons">delete</span>
+            </button>
+            <button class="btn-edit" @click="onEdit">
+                <span class="material-icons">edit</span>
             </button>
 
-            <button disabled>Editar</button>
             <button disabled>Añadir al carrito</button>
         </div>
     </div>
 </template>
+<style scoped>
+.actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+</style>
