@@ -49,15 +49,12 @@ export const store = reactive({
         }
     },
 
-    async checkout() {
-        try {
-            await api.processCheckout(this.state.cart);
-            
-            this.clearCart();
-            this.addMessage("Compra realizada con éxito. Gracias por su confianza.", 'success');
-        } catch (error) {
-            this.addMessage(error.message, 'danger');
-        }
+    get cartTotalItems() {
+        return this.state.cart.length;
+    },
+
+    get cartTotalPrice() {
+        return this.state.cart.reduce((acc, book) => acc + parseFloat(book.price || 0), 0);
     },
 
     addMessage(text, type = 'danger') {
@@ -141,4 +138,6 @@ export const store = reactive({
             this.addMessage("Error al borrar el libro: " + error.message, 'danger');
         }
     }
+
+    
 });
