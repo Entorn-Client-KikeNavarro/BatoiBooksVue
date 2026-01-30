@@ -1,14 +1,9 @@
 <script setup>
-  import { computed, onMounted } from "vue";
-  import AppMenu from './Components/AppMenu.vue';
-  import AppMessages from './Components/AppMessages.vue';
-  import AppAbout from './Components/AppAbout.vue';
-  import BookForm from './Components/BookForm.vue';
-  import BooksList from './Components/BooksList.vue';
-  import { store } from "./stores/index.js"
-  onMounted(async () => {
-    await store.getDBBooksAction()
-  })
+import AppMenu from './Components/AppMenu.vue';
+import AppMessages from './Components/AppMessages.vue';
+import BooksList from './Components/BooksList.vue';
+import BookForm from './Components/BookForm.vue';
+import AppAbout from './Components/AppAbout.vue';
 </script>
 
 <template>
@@ -22,7 +17,6 @@
     <AppMessages></AppMessages>
     <BooksList></BooksList>
   <div>
-    <div id="list"></div>
     <BookForm></BookForm>
   </div>
   <br>

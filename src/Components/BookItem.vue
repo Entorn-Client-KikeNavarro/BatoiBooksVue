@@ -1,26 +1,28 @@
 <script setup>
-    defineProps(['book'])
+    const props = defineProps(['book']);
+    const emit = defineEmits(['delete']);
+
+    const onDelete = () => {
+        emit('delete', props.book.id, props.book.moduleCode);
+    };
 </script>
 <template>
-    <div>
-        <h3>libro: {{book.id}}</h3><br>
-            <h3>{{book.moduleCode}}</h3>
-            <p>{{book.publisher}}</p><br>
-            <p>{{book.pages}} paginas</p><br>
-            <p>Estado: {{book.status}}</p><br>
-            <p>vendido el: {{book.soldDate || 'No vendido'}}</p><br>
-            <p>{{book.comments}}</p><br>
-            <p>{{book.price}}€</p>
-            <div>
-                <button class="btn-add-cart" data-id="${book.id}">
-                    <span class="material-icons">add_shopping_cart</span>
-                </button>
-                <button class="btn-edit" data-id="${book.id}">
-                    <span class="material-icons">edit</span>
-                </button>
-                <button class="btn-delete" data-id="${book.id}">
-                    <span class="material-icons">delete</span>
-                </button>
-            </div>
+    <div class="card">
+        <h3>{{ book.moduleCode }} (ID: {{ book.id }})</h3>
+        <p>Editorial: {{ book.publisher }}</p>
+        <p>Páginas: {{ book.pages }}</p><br>
+        <p>Estado: {{ book.status }}</p><br>
+        <p>Vendido el: {{book.soldDate || 'En venta'}}</p><br>
+        <p>Comentarios: {{ book.comments }}</p><br>
+        <h4 class="price">{{ book.price }}€</h4>
+            
+        <div class="actions">
+            <button class="btn-delete" @click="onDelete">
+                <span class="material-icons">delete</span> Borrar
+            </button>
+
+            <button disabled>Editar</button>
+            <button disabled>Añadir al carrito</button>
+        </div>
     </div>
 </template>
