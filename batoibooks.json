@@ -2205,6 +2205,16 @@
       "status": "good",
       "comments": "",
       "soldDate": ""
+    },
+    {
+      "id": "c68f",
+      "moduleCode": "",
+      "publisher": "McGraw-Hill",
+      "price": 13,
+      "pages": 344,
+      "status": "bad",
+      "comments": "Fet polss",
+      "soldDate": "2026-01-31"
     }
   ]
 }
