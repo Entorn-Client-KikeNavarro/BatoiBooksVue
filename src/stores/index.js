@@ -1,13 +1,64 @@
 import { reactive } from "vue";
 import api from "../services/api";
+const savedCart = JSON.parse(localStorage.getItem('batoi_cart')) || [];
 
 export const store = reactive({
     state: {
         books: [],     
         modules: [],   
-        messages: []    
+        messages: [],
+        cart: savedCart    
     },
 
+    saveCart() {
+        localStorage.setItem('batoi_cart', JSON.stringify(this.state.cart));
+    },
+
+    addToCart(book) {
+        const exists = this.state.cart.some(item => item.id === book.id);
+        
+        if (!exists) {
+            this.state.cart.push(book);
+            this.saveCart();
+            this.addMessage(`Añadido al carrito: ${book.moduleCode}`, 'success');
+        } else {
+            this.addMessage("El libro ya está en el carrito", 'warning');
+        }
+    },
+
+    removeFromCart(id) {
+        this.state.cart = this.state.cart.filter(item => item.id !== id);
+        this.saveCart();
+        this.addMessage("Libro eliminado del carrito", 'warning');
+    },
+
+    clearCart() {
+        this.state.cart = [];
+        this.saveCart();
+        this.addMessage("Carrito vaciado", 'info');
+    },
+
+    async checkout() {
+        try {
+            await api.processCheckout(this.state.cart);
+            
+            this.clearCart();
+            this.addMessage("Compra realizada con éxito. Gracias por su confianza.", 'success');
+        } catch (error) {
+            this.addMessage(error.message, 'danger');
+        }
+    },
+
+    async checkout() {
+        try {
+            await api.processCheckout(this.state.cart);
+            
+            this.clearCart();
+            this.addMessage("Compra realizada con éxito. Gracias por su confianza.", 'success');
+        } catch (error) {
+            this.addMessage(error.message, 'danger');
+        }
+    },
 
     addMessage(text, type = 'danger') {
         const newMessage = {

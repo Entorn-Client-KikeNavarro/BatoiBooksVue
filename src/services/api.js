@@ -26,5 +26,21 @@ export default {
     },
     getModules() {
         return apiClient.get('/modules');
+    },
+
+    async processCheckout(cart) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const total = cart.reduce((acc, item) => acc + parseFloat(item.price), 0);
+                
+                const firstDigit = parseInt(total.toString()[0]);
+
+                if (firstDigit < 5) {
+                    reject(new Error("Transacción fallada: Importe no válido según reglas de negocio."));
+                } else {
+                    resolve({ success: true, message: "Compra realizada con éxito" });
+                }
+            }, 500);
+        });
     }
 };
